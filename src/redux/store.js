@@ -1,12 +1,22 @@
-import { createStore } from 'redux';
-import { devToolsEnhancer } from '@redux-devtools/extension';
-import { rootReducer } from './rootReducer';
+import { configureStore } from '@reduxjs/toolkit';
+import { persistedReducer } from './rootReducer';
+import {
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 
-const enhancer = devToolsEnhancer();
-
-export const store = createStore(rootReducer, enhancer);
-
-// import { persistStore } from 'redux-persist';
-// import { persistedReducer } from './rootReducer';
-
-// export const persistor = persistStore(store);
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+export const persistor = persistStore(store);
