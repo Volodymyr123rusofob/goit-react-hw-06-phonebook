@@ -1,39 +1,44 @@
-import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import style from './contactForm.module.css';
+import { addContact } from '../../../redux/contactsList/actions';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { getListContacts } from '../../../redux/contactsList/selectors';
 
-const ContactForm = ({ onSubmit }) => {
-  // !=============
-  const [contact, setContact] = useState({
-    name: '',
-    number: '',
-  });
-
+const ContactForm = () => {
+  const contacts = useSelector(getListContacts);
+  const dispatch = useDispatch();
   const nameId = nanoid();
   const numberId = nanoid();
-  // !==============
-  const { name, number } = contact;
 
-  const handleChange = ({ target }) => {
-    const { name, value } = target;
-    setContact({ ...contact, [name]: value });
+  const isDublicate = ({ name }) => {
+    const normalizedName = name.toLowerCase();
+    const dublicate = contacts.find(item => {
+      const normalizedCurrentName = item.name.toLowerCase();
+      return normalizedCurrentName === normalizedName;
+    });
+    return Boolean(dublicate);
+  };
+
+  const onAddContact = data => {
+    if (isDublicate(data)) {
+      return alert(`Contact ${data.name} already in list`);
+    }
+    dispatch(addContact(data));
   };
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit(contact);
-    setContact({
-      name: '',
-      number: '',
-    });
+    const { name, number } = e.target.elements;
+    const newContact = { name: name.value, number: number.value };
+    onAddContact(newContact);
+    e.target.reset();
   };
 
   return (
     <form onSubmit={handleSubmit} className={style.form} action="">
       <label htmlFor={nameId}>Name</label>
       <input
-        value={name}
-        onChange={handleChange}
         id={nameId}
         className={style.inp}
         type="text"
@@ -42,8 +47,6 @@ const ContactForm = ({ onSubmit }) => {
       />
       <label htmlFor={numberId}>Number</label>
       <input
-        value={number}
-        onChange={handleChange}
         id={numberId}
         className={style.inp}
         type="tel"

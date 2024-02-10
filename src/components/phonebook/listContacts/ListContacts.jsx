@@ -1,12 +1,16 @@
 import style from './listContacts.module.css';
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../../../redux/contactsList/actions';
 
-const ListContacts = ({ items, deleteContact }) => {
+const ListContacts = ({ items }) => {
+  const dispatch = useDispatch();
+
   const elements = items.map(({ id, name, number }) => (
     <li key={id} className={style.list}>
       {name}: {number}
       <button
         className={style.btn}
-        onClick={() => deleteContact(id)}
+        onClick={() => dispatch(deleteContact(id))}
         type="button"
       >
         Delete
