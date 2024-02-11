@@ -1,14 +1,14 @@
 import style from './filter.module.css';
 import ListContacts from '../listContacts/ListContacts';
 import { useSelector } from 'react-redux';
-import { getListContacts } from '../../../redux/contactsList/selectors';
+import { selectListContacts } from '../../../redux/contactsList/selectors';
 import { useDispatch } from 'react-redux';
-import { getfilterContact } from '../../../redux/contactsFilters/selectors';
+import { selectFilterContact } from '../../../redux/contactsFilters/selectors';
 import { filterContact } from '../../../redux/contactsFilters/filterSlice';
 
 const FilterContact = () => {
-  const contacts = useSelector(getListContacts);
-  const filter = useSelector(getfilterContact);
+  const contacts = useSelector(selectListContacts);
+  const filter = useSelector(selectFilterContact);
   const dispatch = useDispatch();
   const getFilteredContact = () => {
     if (!filter) return contacts;
